@@ -43,7 +43,7 @@ class Player(pygame.sprite.Sprite):
    def __init__(self, team):
       pygame.sprite.Sprite.__init__(self, self.groups)
       self.image = pygame.Surface((16, 16))
-      self.image.fill((255, 200, 0))
+      self.image.fill((255/(team+1), 100*team, (1+team)*125))
       self.rect = self.image.get_rect(topleft=[64, 400])
       self.jump_speed = 0
       self.jumping = False

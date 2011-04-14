@@ -80,8 +80,7 @@ def main():
          if frame != []:
             preLen = len(players.sprites())
             if len(frame) > preLen:
-               Player((len(frame)/2)%2)
-               print (len(frame)/2)%2
+               Player(0)
 #               Player()
             if len(frame) < preLen:
                players.remove(players.sprites()[0])
@@ -92,6 +91,7 @@ def main():
                # correct player rect with received info
                playerlist[i].rect = pygame.Rect(frame[i][0])
                playerlist[i].box.rect = pygame.Rect(frame[i][1])
+               playerlist[i].team = pygame.Rect(frame[i][2])
          
          #Draw the scene
          screen.fill((0, 0, 0))
