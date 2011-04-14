@@ -40,7 +40,7 @@ def main():
       clock = pygame.time.Clock()
       
       pygame.display.set_caption("SERVER WINDOW")
-      screen = pygame.display.set_mode((640,480), pygame.DOUBLEBUF)
+      #screen = pygame.display.set_mode((640,480), pygame.DOUBLEBUF)
       pygame.mouse.set_visible(True)
 
       #Create all the platforms by parsing the level.
@@ -57,7 +57,7 @@ def main():
          #print "Incoming", incoming.qsize()
          #print "Outgoing", outgoing.qsize()
 
-         while len(frameList) <= 10:
+         while len(frameList) <= 4:
             frame = get_frame()
             if frame != '':
                frameList.append(frame)
@@ -75,7 +75,7 @@ def main():
          rectdata = []
          for p in players.sprites():
             # Create a tuple of rect data
-            rectdata.append( (((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height))) )
+            rectdata.append( (((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height))),p.team )
          put_frame(rectdata)
 
          #screen.fill((0,0,0))
