@@ -54,7 +54,7 @@ def main():
 
    try:
       while True:
-         clock.tick(60)
+         clock.tick(30)
 
          #print pygame.time.get_ticks()
          
@@ -72,7 +72,6 @@ def main():
                if e.key == K_ESCAPE:
                   # Send exit signal over TCP
                   os._exit(1)
-
          # Send keystate over UDP
          put_frame(pygame.key.get_pressed())
          
