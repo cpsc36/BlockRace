@@ -54,8 +54,8 @@ def main():
          ticks = clock.tick()
 
          #print pygame.time.get_ticks()
-         print "Incoming", incoming.qsize()
-         print "Outgoing", outgoing.qsize()
+         #print "Incoming", incoming.qsize()
+         #print "Outgoing", outgoing.qsize()
 
          while len(frameList) <= 10:
             frame = get_frame()
@@ -78,10 +78,9 @@ def main():
             rectdata.append( (((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height))) )
          put_frame(rectdata)
 
-         screen.fill((0,0,0))
-         sprites.draw(screen)
-         players.draw(screen)
-         pygame.display.flip()
+         #screen.fill((0,0,0))
+         #sprites.draw(screen)
+         #pygame.display.flip()
       # End of game loop
    except KeyboardInterrupt:
       print "Game server interrupted by user"
