@@ -75,7 +75,7 @@ def main():
          rectdata = []
          for p in players.sprites():
             # Create a tuple of rect data
-            rectdata.append( (((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height))),p.team )
+            rectdata.append( [((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height)),p.team] )
          put_frame(rectdata)
 
          #screen.fill((0,0,0))

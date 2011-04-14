@@ -72,7 +72,7 @@ class clientHandler(threading.Thread):
                   self.message_queues[connection] = Queue.Queue()
 
                   # Create player sprite 
-                  newPlayer = Player((len(players.sprites())+1)%2) 
+                  newPlayer = Player(len(players.sprites())%2) 
                   print (len(players.sprites())+1)%2
                   # Add client to dictionary
                   clientDict[client_address[0]] = (newPlayer, connection)
