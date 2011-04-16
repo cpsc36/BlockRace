@@ -37,10 +37,12 @@ def main():
       # Initialize pygame      
       print "Initializing pygame"
       pygame.init()
+      pygame.font.init()
       clock = pygame.time.Clock()
-      
+      font = pygame.font.Font(None,12)
+
       pygame.display.set_caption("SERVER WINDOW")
-      #screen = pygame.display.set_mode((640,480), pygame.DOUBLEBUF)
+      screen = pygame.display.set_mode((640,480), pygame.DOUBLEBUF)
       pygame.mouse.set_visible(True)
 
       #Create all the platforms by parsing the level.
@@ -52,10 +54,6 @@ def main():
          frameList = []
          
          ticks = clock.tick()
-
-         #print pygame.time.get_ticks()
-         #print "Incoming", incoming.qsize()
-         #print "Outgoing", outgoing.qsize()
 
          while len(frameList) <= 4:
             frame = get_frame()
@@ -78,9 +76,16 @@ def main():
             rectdata.append( [((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height)),p.team] )
          put_frame(rectdata)
 
-         #screen.fill((0,0,0))
-         #sprites.draw(screen)
-         #pygame.display.flip()
+         line_a = font.render("Incoming" + str(incoming.qsize()), 1, (10,10,10))
+         linepos_a = line_a.get_rect(center=(0,0))
+         line_b = font.render("Outgoing" + str(outgoing.qsize()), 1, (10,10,10))
+         linepos_b = line_b.get_rect(center=(0,10))
+
+         screen.fill((0,0,0))
+         sprites.draw(screen)
+         screen.blit(line_a, linepos_a)
+         screen.blit(line_b, linepos_b)
+         pygame.display.flip()
       # End of game loop
    except KeyboardInterrupt:
       print "Game server interrupted by user"
