@@ -39,7 +39,7 @@ def main():
       pygame.init()
       pygame.font.init()
       clock = pygame.time.Clock()
-      font = pygame.font.Font(None,12)
+      font = pygame.font.Font(None,25)
 
       pygame.display.set_caption("SERVER WINDOW")
       screen = pygame.display.set_mode((640,480), pygame.DOUBLEBUF)
@@ -76,10 +76,10 @@ def main():
             rectdata.append( [((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height)),p.team] )
          put_frame(rectdata)
 
-         line_a = font.render("Incoming" + str(incoming.qsize()), 1, (10,10,10))
-         linepos_a = line_a.get_rect(center=(0,0))
-         line_b = font.render("Outgoing" + str(outgoing.qsize()), 1, (10,10,10))
-         linepos_b = line_b.get_rect(center=(0,10))
+         line_a = font.render("Incoming: " + str(incoming.qsize()), 1, (10,10,10), (255,255,255))
+         linepos_a = line_a.get_rect(topleft=(0,0))
+         line_b = font.render("Outgoing: " + str(outgoing.qsize()), 1, (10,10,10), (255,255,255))
+         linepos_b = line_b.get_rect(topleft=(0,20))
 
          screen.fill((0,0,0))
          sprites.draw(screen)
