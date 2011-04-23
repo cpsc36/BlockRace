@@ -16,7 +16,7 @@ try:
 except:
    print "Pygame not found"
 
-HOST = '172.22.34.36'
+HOST = ''
 
 def main():
    # Init pygame
