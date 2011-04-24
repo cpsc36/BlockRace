@@ -129,8 +129,11 @@ class commHandler(threading.Thread):
             data = pickle.loads(data)
             # Add frame to inqueue
             if data != []:
-               #incoming.put((address,data))
-               incoming.put(data)
+               try:
+                  #incoming.put((address,data))
+                  incoming.put(data)
+               except Queue.Full:
+                  continue
          # End handling inputs
 
          # Handle outputs
@@ -174,7 +177,6 @@ def get_frame():
       return ''
    except:
       pass
-      #print("Queue is empty")
 
 def has_frames():
    if incoming.qsize() > 0:

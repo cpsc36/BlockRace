@@ -54,19 +54,22 @@ class Player(pygame.sprite.Sprite):
       self.delay = 0
       self.jdelay = 0
       self.team = team
-   def update(self, key):
+      self.key = pygame.key.get_pressed()
+   def updateKeys(self, keystate):
+      self.key = keystate
+   def update(self):
       dir = 0
       self.delay += 1
       self.jdelay += 1
       
-      if key[K_SPACE]:
+      if self.key[K_SPACE]:
          if self.jdelay > 20:
             if self.jumping == False:
                if self.entermode == 'move':
                   self.jump_speed = -5.5
                   self.jumping = True
                   self.jdelay = 0
-      if key[K_a]:
+      if self.key[K_a]:
                if not self.jumping:
                   if self.delay > 5:
                      self.entermode = 'set'
@@ -74,32 +77,32 @@ class Player(pygame.sprite.Sprite):
 
       #Move left/right
       if self.entermode == 'move':
-         if key[K_LEFT]:
-            dir = -1
-         if key[K_RIGHT]:
-            dir = 1
+         if self.key[K_LEFT]:
+            dir = -1*(len(players.sprites()))
+         if self.key[K_RIGHT]:
+            dir = 1*(len(players.sprites()))
       if self.entermode == 'set':
-         if key[K_LEFT]:
+         if self.key[K_LEFT]:
             if abs(self.boxposud) + abs(self.boxposrl-1) < MAX_RANGE:
                if self.delay > 5:
                   self.boxposrl -= 1
                   self.delay = 0
-         if key[K_RIGHT]:
+         if self.key[K_RIGHT]:
             if abs(self.boxposud) + abs(self.boxposrl+1) < MAX_RANGE:
                if self.delay > 5:
                   self.boxposrl += 1
                   self.delay = 0
-         if key[K_UP]:
+         if self.key[K_UP]:
             if abs(self.boxposud-1) + abs(self.boxposrl) < MAX_RANGE:
                if self.delay > 5:
                   self.boxposud -= 1
                   self.delay = 0
-         if key[K_DOWN]:
+         if self.key[K_DOWN]:
             if abs(self.boxposud+1) + abs(self.boxposrl) < MAX_RANGE:
                if self.delay > 5:
                   self.boxposud += 1
                   self.delay = 0
-         if key[K_s]:
+         if self.key[K_s]:
             self.entermode = 'move'
        
       if self.entermode == 'set':

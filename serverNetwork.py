@@ -25,7 +25,7 @@ RECV_PORT   = 7779 # Receiving frames
 clientDict = {}
 
 # Queues for sending/receiving data
-outgoing = Queue.Queue()
+outgoing = Queue.Queue(30)
 incoming = Queue.Queue()
 
 #*************************************
@@ -177,7 +177,10 @@ class commHandler(threading.Thread):
             address = addr[0]  
             data = pickle.loads(data)
             # Add frame to inqueue
-            incoming.put((address,data))
+            try:               
+               incoming.put((address,data))
+            except Queue.Full:
+               continue
          # End handling inputs
 
          # Handle outputs
@@ -212,9 +215,10 @@ def put_frame(toSend):
       #frameOut.put(toSend, True, Q_TIMEOUT)
       if toSend != []:
          outgoing.put(toSend, False)
+   except Queue.Full:
+      pass
    except:
       pass
-      #print("Queue is full")
 
 def get_frame():
    try:
