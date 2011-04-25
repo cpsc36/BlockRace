@@ -121,7 +121,7 @@ class commHandler(threading.Thread):
       # Begin main loop
       while True:
          readable, writable, exceptional = select.select(self.inputs, self.outputs, self.inputs)
-
+         
          # Handle inputs
          for s in readable:
             # Receive
@@ -129,11 +129,22 @@ class commHandler(threading.Thread):
             data = pickle.loads(data)
             # Add frame to inqueue
             if data != []:
-               try:
-                  #incoming.put((address,data))
-                  incoming.put(data)
-               except Queue.Full:
-                  continue
+               preLen = len(players.sprites())
+               if len(data) > preLen:
+                  Player(data[len(players.sprites())][2])
+               if len(data) < preLen:
+                  players.remove(players.sprites()[0])
+                  sprites.remove(players.sprites()[0].box)
+               playerlist = players.sprites()
+
+               for i in range(len(playerlist)):
+                  playerlist[i].rect = pygame.Rect(data[i][0])
+                  playerlist[i].box.rect = pygame.Rect(data[i][1])
+               #try:
+               #   #incoming.put((address,data))
+               #   incoming.put(data)
+               #except Queue.Full:
+               #   continue
          # End handling inputs
 
          # Handle outputs

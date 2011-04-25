@@ -54,7 +54,7 @@ def main():
 
    try:
       while True:
-         clock.tick(30)
+         clock.tick(60)
          #print pygame.time.get_ticks()
          
          # Get inputs
@@ -74,24 +74,25 @@ def main():
          #put_frame(pygame.key.get_pressed())
          #print_put_frame()
          # Get a frame
-         frame = []
-         if has_frames():
-            frame = get_frame()
+         #frame = []
+         #if has_frames():
+         #   frame = get_frame()
 
-         if frame != []:
-            preLen = len(players.sprites())
-            if len(frame) > preLen:
-               Player(frame[len(players.sprites())][2])
-            if len(frame) < preLen:
-               players.remove(players.sprites()[0])
-            playerlist = players.sprites()
+         #if frame != []:
+         #   preLen = len(players.sprites())
+         #   if len(frame) > preLen:
+         #      Player(frame[len(players.sprites())][2])
+         #   if len(frame) < preLen:
+         #      players.remove(players.sprites()[0])
+         #      sprites.remove(players.sprites()[0].box) # Remove associated box
+         #   playerlist = players.sprites()
 
             # Update state to display based on received data
             # len(playerlist)
-            for i in range(1):
-               # correct player rect with received info
-               playerlist[i].rect = pygame.Rect(frame[i][0])
-               playerlist[i].box.rect = pygame.Rect(frame[i][1])
+         #   for i in range(1):
+         #      # correct player rect with received info
+         #      playerlist[i].rect = pygame.Rect(frame[i][0])
+         #      playerlist[i].box.rect = pygame.Rect(frame[i][1])
 
          line_a = font.render("Incoming: " + str(incoming.qsize()), 1, (10,10,10),(255,255,255))
          linepos_a = line_a.get_rect(topleft=(0,0))

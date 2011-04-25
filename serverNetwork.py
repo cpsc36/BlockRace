@@ -1,4 +1,4 @@
-import os, sys, socket, threading, Queue, select
+import os, sys, socket, threading, Queue, select, time
 
 from gameClasses import *
 
@@ -73,7 +73,6 @@ class clientHandler(threading.Thread):
 
                   # Create player sprite 
                   newPlayer = Player(len(players.sprites())%2) 
-                  print (len(players.sprites())+1)%2
                   # Add client to dictionary
                   clientDict[client_address[0]] = (newPlayer, connection)
                   print "New connection added to dictionary: ", client_address[0]
@@ -98,6 +97,7 @@ class clientHandler(threading.Thread):
                      # Interpret empty result as closed connection
                      address = s.getpeername()[0]
                      print "Removing ", address
+                     sprites.remove(clientDict[address][0].box)
                      players.remove(clientDict[address][0])
                      sprites.remove(clientDict[address][0])
                      clientDict.pop(address)
@@ -165,8 +165,12 @@ class commHandler(threading.Thread):
 
       self.oldData = []
 
+      self.upPerSec = 90
+      self.upCheck = 0
    def run(self):
       # Begin main loop
+      self.upCheck = pygame.time.get_ticks()
+      ups = self.upPerSec
       while True:
          readable, writable, exceptional = select.select(self.inputs, self.outputs, self.inputs)
 
@@ -176,32 +180,44 @@ class commHandler(threading.Thread):
             data, addr = self.recv_sock.recvfrom(1024)
             address = addr[0]  
             data = pickle.loads(data)
+
+            if address in clientDict:
+               pTuple = clientDict.get(address,'')
+               if pTuple is not '':
+                  pTuple[0].updateKeys(data)
+
             # Add frame to inqueue
-            try:               
-               incoming.put((address,data))
-            except Queue.Full:
-               continue
+            #try:               
+            #   incoming.put((address,data))
+            #except Queue.Full:
+            #   continue
          # End handling inputs
 
          # Handle outputs
          for s in writable:
-            # Send frame from Queue
-            try:
-               toSend = outgoing.get(False)
-               #toSend = outgoing.get(True, 0.1)
-            except Queue.Empty:
-               #toSend = self.oldData
+            if (pygame.time.get_ticks() - self.upCheck) >= ups:
+               self.upCheck = pygame.time.get_ticks()
                toSend = []
-            except:
-               print "Problem in handling outputs"
-               os._exit(1)
+               for p in players.sprites():
+                  toSend.append( [((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height)),p.team] )
+
+            # Send frame from Queue
+            #try:
+            #   toSend = outgoing.get(False)
+            #   #toSend = outgoing.get(True, 0.1)
+            #except Queue.Empty:
+            #   #toSend = self.oldData
+            #   toSend = []
+            #except:
+            #   print "Problem in handling outputs"
+            #   os._exit(1)
 
             # Package data to send
-            if toSend != []:
-               toSend = pickle.dumps(toSend)
-               # Send to each client
-               for addr in clientDict.keys():
-                  self.send_sock.sendto(toSend, (addr,SEND_PORT))
+               if toSend != []:
+                  toSend = pickle.dumps(toSend)
+                  # Send to each client
+                  for addr in clientDict.keys():
+                     self.send_sock.sendto(toSend, (addr,SEND_PORT))
          # End handling outputs
 
          # Handle exceptions
