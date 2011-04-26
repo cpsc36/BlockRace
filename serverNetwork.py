@@ -165,19 +165,19 @@ class commHandler(threading.Thread):
 
       self.oldData = []
 
-      self.upPerSec = 90
+      self.upPerSec = 1000
       self.upCheck = 0
    def run(self):
       # Begin main loop
       self.upCheck = pygame.time.get_ticks()
-      ups = self.upPerSec
+      ups = int(1000/self.upPerSec)
       while True:
          readable, writable, exceptional = select.select(self.inputs, self.outputs, self.inputs)
 
          # Handle inputs
          for s in readable:
             # Do Receive from
-            data, addr = self.recv_sock.recvfrom(1024)
+            data, addr = s.recvfrom(1024)
             address = addr[0]  
             data = pickle.loads(data)
 
@@ -185,34 +185,18 @@ class commHandler(threading.Thread):
                pTuple = clientDict.get(address,'')
                if pTuple is not '':
                   pTuple[0].updateKeys(data)
-
-            # Add frame to inqueue
-            #try:               
-            #   incoming.put((address,data))
-            #except Queue.Full:
-            #   continue
          # End handling inputs
 
          # Handle outputs
          for s in writable:
-            if (pygame.time.get_ticks() - self.upCheck) >= ups:
+            diff = pygame.time.get_ticks() - self.upCheck
+            if diff >= ups:
                self.upCheck = pygame.time.get_ticks()
                toSend = []
                for p in players.sprites():
                   toSend.append( [((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height)),p.team] )
 
-            # Send frame from Queue
-            #try:
-            #   toSend = outgoing.get(False)
-            #   #toSend = outgoing.get(True, 0.1)
-            #except Queue.Empty:
-            #   #toSend = self.oldData
-            #   toSend = []
-            #except:
-            #   print "Problem in handling outputs"
-            #   os._exit(1)
-
-            # Package data to send
+               # Package data to send
                if toSend != []:
                   toSend = pickle.dumps(toSend)
                   # Send to each client

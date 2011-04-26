@@ -107,6 +107,7 @@ class commHandler(threading.Thread):
       # UDP socket
       self.recv_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
       self.recv_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR,1)
+      self.recv_sock.setblocking(0)
       self.recv_sock.bind((HOST,RECV_PORT))
 
       # Socket for sending frames to client
@@ -125,7 +126,8 @@ class commHandler(threading.Thread):
          # Handle inputs
          for s in readable:
             # Receive
-            data = self.recv_sock.recv(1024)
+            #data = self.recv_sock.recv(1024)
+            data = s.recv(1024)
             data = pickle.loads(data)
             # Add frame to inqueue
             if data != []:
@@ -140,18 +142,13 @@ class commHandler(threading.Thread):
                for i in range(len(playerlist)):
                   playerlist[i].rect = pygame.Rect(data[i][0])
                   playerlist[i].box.rect = pygame.Rect(data[i][1])
-               #try:
-               #   #incoming.put((address,data))
-               #   incoming.put(data)
-               #except Queue.Full:
-               #   continue
          # End handling inputs
 
          # Handle outputs
          for s in writable:
             # Send frame from Queue
             try:
-               toSend = outgoing.get(True, 0.1)
+               toSend = outgoing.get(False)
             except Queue.Empty:
                # Nothing in outgoing to send
                continue
@@ -162,7 +159,7 @@ class commHandler(threading.Thread):
             # Package data to send
             toSend = pickle.dumps(toSend)
 
-            self.send_sock.sendto(toSend, (self.server_address,SEND_PORT))
+            s.sendto(toSend, (self.server_address,SEND_PORT))
          # End handling outputs
 
          # Handle exceptions
@@ -173,7 +170,6 @@ class commHandler(threading.Thread):
 
 def put_frame(toSend):
    try:
-      #frameOut.put(toSend, True, Q_TIMEOUT)
       outgoing.put(toSend, False)
    except:
       pass
@@ -181,7 +177,6 @@ def put_frame(toSend):
 
 def get_frame():
    try:
-      #toReturn = frameIn.get(True, Q_TIMEOUT)
       toReturn = incoming.get(False)
       return toReturn
    except Queue.Empty:
