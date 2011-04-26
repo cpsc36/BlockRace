@@ -52,29 +52,7 @@ def main():
       while True:
          clock.tick(60)
          
-         #f = get_frame()
-
-         # Lookup Player sprite based on address tied to frame and update
-         # f[0] => originating address of frame data
-         # clientDict[f[0]] => tuple containing Player sprite and connection
-         # clientDict[f[0]][0] => Player sprite we desire
-         # f[1] => frame data to pass into update
-         # (if takes care of frames that might be relics after a client dropped)
-         #if f is not '':
-         #   if f[0] in clientDict:
-         #      pTuple = clientDict.get(f[0],'')
-         #      if pTuple is not '':
-         #         pTuple[0].updateKeys(f[1])
-
          players.update()
-
-         # Construct array of tuples (rects) to send to each client
-         #rectdata = []
-         #for p in players.sprites():
-            # Create a tuple of rect data
-         #   rectdata.append( [((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)),((p.box.rect.left,p.box.rect.top),(p.box.rect.width,p.box.rect.height)),p.team] )
-
-         #put_frame(rectdata)
 
          line_a = font.render("Incoming: " + str(incoming.qsize()), 1, (10,10,10), (255,255,255))
          linepos_a = line_a.get_rect(topleft=(0,0))
