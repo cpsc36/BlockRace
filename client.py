@@ -16,7 +16,10 @@ try:
 except:
    print "Pygame not found"
 
-HOST = ''
+if len(sys.argv) < 2:
+   HOST = ''
+else:
+   HOST = sys.argv[1]
 
 def main():
    # Init pygame
