@@ -31,11 +31,11 @@ map = \
 1......................1........1......1
 1......................1........1....111
 1111111111111111111....1........1......1
-1......................1........1......1
-1.....................11........1......1
-1.............1111..11111111....1......1
-1................1........11...........1
-1................11.......11...........1
+1....3.................1........1......1
+1....3................11........1......1
+1....3........1111..11111111....1......1
+1....3...........1........11...........1
+1....3...........11.......11...........1
 1111111111111111111111111111111111111111
 """
 
@@ -48,7 +48,7 @@ class Player(pygame.sprite.Sprite):
       self.jump_speed = 0
       self.jumping = False
       self.entermode = 'move'
-      self.box = Box([-1000,-1000])
+      self.box = Box([-1000,-1000], team)
       self.boxposud = 0
       self.boxposrl = 0
       self.delay = 0
@@ -78,9 +78,9 @@ class Player(pygame.sprite.Sprite):
       #Move left/right
       if self.entermode == 'move':
          if self.key[K_LEFT]:
-            dir = -1*(len(players.sprites()))
+            dir = -1#*(len(players.sprites()))
          if self.key[K_RIGHT]:
-            dir = 1*(len(players.sprites()))
+            dir = 1#*(len(players.sprites()))
       if self.entermode == 'set':
          if self.key[K_LEFT]:
             if abs(self.boxposud) + abs(self.boxposrl-1) < MAX_RANGE:
@@ -106,9 +106,9 @@ class Player(pygame.sprite.Sprite):
             self.entermode = 'move'
        
       if self.entermode == 'set':
-         self.box.rect.x -= 1000
-         self.box.rect.y -= 1000
-         self.box = Box([self.rect.x + (self.boxposrl*16), self.rect.y + (self.boxposud*16)])
+         self.box.rect.x = -10
+         self.box.rect.y = -10
+         self.box = Box([self.rect.x + (self.boxposrl*16), self.rect.y + (self.boxposud*16)], self.team)
 
       #Increase the jump speed so you fall
       if self.jump_speed < 5:
@@ -140,7 +140,6 @@ class Player(pygame.sprite.Sprite):
          #for what direction the sprite is moving, and then we
          #clamp the "real" rect to that side
          if new_rect.colliderect(sprite.rect):
-             
             #Check the X axis
             if dx > 0: #moving right
                self.rect.right = sprite.rect.left
@@ -164,6 +163,8 @@ class Player(pygame.sprite.Sprite):
       for sprite in self.box_sprites:
          #if sprite is not self.box:   #Can't use own box, might be useful later.
          if sprite is self.box and self.entermode == 'set':
+            pass
+         elif sprite.team is not self.team:
             pass
          else:
             if new_rect.colliderect(sprite.rect):
@@ -192,20 +193,24 @@ class Player(pygame.sprite.Sprite):
       if dy != 0:
          self.__move(0, dy)
 
-class Singleton(object):
-   __instance = None
-   def __new__(cls, *args, **kwargs):
-      if not cls.__instance:
-         cls.__instance = super(Singleton, cls).__new__(cls, *args, **kwargs)
-      return cls.__instance
-
 #Class for the temp box
 class Box(pygame.sprite.Sprite):
-   def __init__(self, pos):
+   def __init__(self, pos, team):
       pygame.sprite.Sprite.__init__(self, self.groups)
       self.image = pygame.Surface((16, 16))
-      self.image.fill((200, 50, 50))
+      self.image.fill((200/(team+1), 50+(team+1)*50, 50*team))
       self.rect = self.image.get_rect(topleft=pos)
+      self.team = team
+
+#class for the gate
+class Gate(pygame.sprite.Sprite):
+   def __init__(self,pos):
+      pygame.sprite.Sprite.__init__(self,self.groups)
+      self.image = pygame.Surface((16,16))
+      self.image.fill((50,50,50))
+      self.rect = self.image.get_rect(topleft=pos)
+   def kill(self):
+      self.rect.x, self.rect.y = -10,-10
 
 #class for the exit
 class Exit(pygame.sprite.Sprite):
@@ -229,12 +234,14 @@ players = pygame.sprite.OrderedUpdates()
 platforms = pygame.sprite.OrderedUpdates()
 boxes = pygame.sprite.OrderedUpdates()
 exits = pygame.sprite.OrderedUpdates()
+gates = pygame.sprite.OrderedUpdates()
 
 #Set the sprites' groups
 Player.groups = sprites, players
 Platform.groups = sprites, platforms
 Box.groups = sprites, boxes
 Exit.groups = sprites, exits
+Gate.groups = sprites, gates, platforms
 
 #The player will loop through all the sprites contained in this
 #group, and then collide with them.
@@ -253,6 +260,8 @@ def parse_level():
             Platform([x*16, y*16])
          if char == "2":
             Exit([x*16, y*16])
+         if char == "3":
+            Gate([x*16, y*16])
  
          #Update the read position.
          x += 1
