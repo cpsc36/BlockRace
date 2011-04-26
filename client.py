@@ -99,6 +99,10 @@ def main():
          line_b = font.render("Outgoing: " + str(outgoing.qsize()), 1, (10,10,10),(255,255,255))
          linepos_b = line_b.get_rect(topleft=(0,20))
 
+         if len(players.sprites()) >= 4:
+            for gate in gates.sprites():
+               gate.kill()
+
          #Draw the scene
          screen.fill((0, 0, 0))
          sprites.draw(screen)
