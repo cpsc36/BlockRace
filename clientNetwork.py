@@ -126,7 +126,6 @@ class commHandler(threading.Thread):
          # Handle inputs
          for s in readable:
             # Receive
-            #data = self.recv_sock.recv(1024)
             data = s.recv(1024)
             data = pickle.loads(data)
             # Add frame to inqueue
@@ -157,7 +156,7 @@ class commHandler(threading.Thread):
                os._exit(1)
 
             # Package data to send
-            toSend = pickle.dumps(toSend)
+            toSend = pickle.dumps(toSend, 1)
 
             s.sendto(toSend, (self.server_address,SEND_PORT))
          # End handling outputs

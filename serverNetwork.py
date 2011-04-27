@@ -65,6 +65,13 @@ class clientHandler(threading.Thread):
                if s is self.sock:
                   # A new player has connected
                   connection, client_address = s.accept()
+                  if client_address[0] in clientDict:
+                     print "Connection ", client_address[0], " already exists..."
+                     connection.close()                     
+                     break                  
+                  if len(players.sprites()) >= 4:
+                     connection.close()
+                     break
                   print 'new connection from ', client_address
                   connection.setblocking(0)
                   self.inputs.append(connection)
@@ -72,10 +79,8 @@ class clientHandler(threading.Thread):
                   self.message_queues[connection] = Queue.Queue()
 
                   # Create player sprite 
-                  if len(players.sprites()) >= 4:
-                     return
+                  newPlayer = Player(len(players.sprites())%2)
 
-                  newPlayer = Player(len(players.sprites())%2) 
                   # Add client to dictionary
                   clientDict[client_address[0]] = (newPlayer, connection)
                   print "New connection added to dictionary: ", client_address[0]
@@ -84,7 +89,7 @@ class clientHandler(threading.Thread):
                   toSend = []
                   for p in playerlist:
                      toSend.append(((p.rect.left,p.rect.top),(p.rect.width,p.rect.height)))
-                  toSend = pickle.dumps(toSend)
+                  toSend = pickle.dumps(toSend, 1)
                   self.message_queues[connection].put(toSend)
                   print "Finished adding new connection"
                else:
@@ -100,6 +105,7 @@ class clientHandler(threading.Thread):
                      # Interpret empty result as closed connection
                      address = s.getpeername()[0]
                      print "Removing ", address
+                     boxes.remove(clientDict[address][0].box)
                      sprites.remove(clientDict[address][0].box)
                      players.remove(clientDict[address][0])
                      sprites.remove(clientDict[address][0])
@@ -201,7 +207,7 @@ class commHandler(threading.Thread):
 
                # Package data to send
                if toSend != []:
-                  toSend = pickle.dumps(toSend)
+                  toSend = pickle.dumps(toSend, 1)
                   # Send to each client
                   for addr in clientDict.keys():
                      self.send_sock.sendto(toSend, (addr,SEND_PORT))

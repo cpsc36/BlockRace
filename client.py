@@ -35,31 +35,21 @@ def main():
 
    clock = pygame.time.Clock()
    font = pygame.font.Font(None,25)
-   # Groups: sprites, players, platforms, boxes, exits
-   # Player.groups = sprites, players
-   # Platform.groups = sprites, platforms
-   # Box.groups = sprites, boxes
-   # Exit.groups = sprites, exits
 
    # Create all the platforms by parsing the level.
    parse_level()
 
    # Set up network threads
-   
    commH = commHandler(HOST)
    commH.setDaemon(True)
    commH.start()
-
-   # Start threads
    clientH = clientHandler(HOST)
    clientH.setDaemon(True)   
    clientH.start()
 
    try:
       while True:
-         #clock.tick(50) # Don't need to limit fps if it's just drawing?
          clock.tick()
-         #print pygame.time.get_ticks()
          
          # Get inputs
          for e in pygame.event.get():
@@ -74,11 +64,6 @@ def main():
             if e.type == KEYUP:
                put_frame(pygame.key.get_pressed())
 
-         line_a = font.render("Incoming: " + str(incoming.qsize()), 1, (10,10,10),(255,255,255))
-         linepos_a = line_a.get_rect(topleft=(0,0))
-         line_b = font.render("Outgoing: " + str(outgoing.qsize()), 1, (10,10,10),(255,255,255))
-         linepos_b = line_b.get_rect(topleft=(0,20))
-
          if len(players.sprites()) >= 4:
             for gate in gates.sprites():
                gate.kill()
@@ -86,8 +71,6 @@ def main():
          #Draw the scene
          screen.fill((0, 0, 0))
          sprites.draw(screen)
-         screen.blit(line_a,linepos_a)
-         screen.blit(line_b,linepos_b)
          pygame.display.flip()
       # End main loop
    except KeyboardInterrupt:
